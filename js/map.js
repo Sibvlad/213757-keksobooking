@@ -13,6 +13,10 @@ var checkin = ['12:00', '13:00', '14:00'];
 var checkout = ['12:00', '13:00', '14:00'];
 var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var template = document.querySelector('#lodge-template').content;
+var dialog = document.querySelector('.dialog');
+var dialogClose = document.querySelector('.dialog__close');
+var tokyoPinMap = document.querySelector('.tokyo__pin-map');
+
 
 function getRandFromArray(array) {
   return array[Math.floor(Math.random() * array.length)];
@@ -98,6 +102,7 @@ function renderPanel(app) {
   dialogTitle.querySelector('img').setAttribute('src', app.author.avatar);
   var lodgeFeatures = templateElement.querySelector('.lodge__features');
 
+
 for (var i = 0; i < app.offer.features.length; i++) {
   var feature = document.createElement('span');
   feature.classList.add('feature__image');
@@ -117,8 +122,52 @@ for (var i = 0; i < apartments.length; i++) {
 }
 document.querySelector('.tokyo__pin-map').appendChild(fragment);
 
+renderPanel(apartments[0]);
 
-renderPanel(apartments[1]);
+function clickHandler(event) {
+  var checkPin = event.target.closest('.pin');
+  if (checkPin) {
+    delectPin();
+    checkPin.classList.add('pin--active');
+    dialog.style.display = 'block';
+  }
+}
+function delectPin() {
+  var element = document.querySelector('.pin--active');
+  if (element) {
+    element.classList.remove('pin--active');
+  }
+}
+
+function keydownHandler(event) {
+  if (event.keyCode === 27) {
+    clickHandler(event);
+  }
+}
+
+function closeDialogHandler() {
+  dialog.style.display = 'none';
+  delectPin();
+}
+
+tokyoPinMap.addEventListener('click', clickHandler);
+tokyoPinMap.addEventListener('keydown', keydownHandler);
+
+dialogClose.addEventListener('click', closeDialogHandler);
+document.addEventListener('keydown', closeKeydownHandle);
+
+
+function closeKeydownHandle(event) {
+  if (event.keyCode === 13) {
+    closeDialogHandler();
+  }
+}
+
+dialogClose.addEventListener('keydown', function (event) {
+  if (event.keyCode === 13) {
+    closeDialogHandler();
+  }
+});
 
 
 
