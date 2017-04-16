@@ -17,7 +17,6 @@ var dialog = document.querySelector('.dialog');
 var dialogClose = document.querySelector('.dialog__close');
 var tokyoPinMap = document.querySelector('.tokyo__pin-map');
 
-
 function getRandFromArray(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
@@ -73,6 +72,14 @@ function generateApartments(count) {
   return apartments;
 }
 
+function getApp(avatar) {
+  for (var j = 0; j < apartments.length; j++) {
+    if (apartments[j].author.avatar === avatar) {
+      return apartments[j];
+    }
+  }
+}
+
 
 function renderPin(apartment) {
   var div = document.createElement('div');
@@ -83,6 +90,7 @@ function renderPin(apartment) {
   img.setAttribute('width', '40');
   img.setAttribute('height', '40');
   img.setAttribute('src', apartment.author.avatar);
+  img.setAttribute('tabindex', '0');
   div.insertAdjacentHTML('afterBegin', img.outerHTML);
   return div;
 }
@@ -103,14 +111,14 @@ function renderPanel(app) {
   var lodgeFeatures = templateElement.querySelector('.lodge__features');
 
 
-for (var i = 0; i < app.offer.features.length; i++) {
-  var feature = document.createElement('span');
-  feature.classList.add('feature__image');
-  feature.classList.add('feature__image--' + app.offer.features[i]);
-  lodgeFeatures.appendChild(feature);
-}
+  for (var i = 0; i < app.offer.features.length; i++) {
+    var feature = document.createElement('span');
+    feature.classList.add('feature__image');
+    feature.classList.add('feature__image--' + app.offer.features[i]);
+    lodgeFeatures.appendChild(feature);
+  }
 
-offerDialog.replaceChild(templateElement, oldPanel);
+  offerDialog.replaceChild(templateElement, oldPanel);
 }
 
 
@@ -129,6 +137,12 @@ function clickHandler(event) {
   if (checkPin) {
     delectPin();
     checkPin.classList.add('pin--active');
+
+    var img = checkPin.querySelector('img');
+    var src = img.getAttribute('src');
+
+    var app = getApp(src);
+    renderPanel(app);
     dialog.style.display = 'block';
   }
 }
@@ -140,10 +154,14 @@ function delectPin() {
 }
 
 function keydownHandler(event) {
-  if (event.keyCode === 27) {
+  if (event.keyCode === 13) {
     clickHandler(event);
   }
+  if (event.keyCode === 27) {
+    closeDialogHandler();
+  }
 }
+
 
 function closeDialogHandler() {
   dialog.style.display = 'none';
@@ -154,7 +172,7 @@ tokyoPinMap.addEventListener('click', clickHandler);
 tokyoPinMap.addEventListener('keydown', keydownHandler);
 
 dialogClose.addEventListener('click', closeDialogHandler);
-document.addEventListener('keydown', closeKeydownHandle);
+dialogClose.addEventListener('keydown', closeKeydownHandle);
 
 
 function closeKeydownHandle(event) {
@@ -168,6 +186,70 @@ dialogClose.addEventListener('keydown', function (event) {
     closeDialogHandler();
   }
 });
+
+var title = document.querySelector('#title');
+title.required = true;
+title.setAttribute('minlength', '30');
+title.setAttribute('maxlength', '100');
+
+
+var price = document.querySelector('#price');
+price.required = true;
+price.setAttribute('placeholder', '1000');
+price.setAttribute('min', '30');
+price.setAttribute('max', '100');
+isNumeric(price.value);
+
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+};
+
+var timeElem = document.querySelector('#time');
+console.log(timeElem);
+
+timeElem.addEventListener('change', function (event) {
+    var target = event.target.value;
+    console.log(target);
+    var timeOutElem = document.querySelector('#timeout');
+    var optionValue = timeOutElem.querySelector('option[value="' + target + '"]');
+    optionValue.setAttribute('selected', 'selected');
+
+  }
+);
+
+var type = document.querySelector('#type');
+
+type.addEventListener('change', function (event) {
+  var target = event.target.value;
+  if (target === 'Квартира') {
+    price.setAttribute('placeholder', '0');
+    price.removeAttribute('max', '100');
+    price.setAttribute('min', '1000');
+  } else if (target === 'Лачуга') {
+    price.setAttribute('placeholder', '0');
+    price.removeAttribute('max', '100');
+    price.setAttribute('min', '0');
+  } else {
+    price.setAttribute('placeholder', '0');
+    price.removeAttribute('max', '100');
+    price.setAttribute('min', '10000');
+  }
+});
+
+var roomElem = document.querySelector('#room_number');
+
+roomElem.addEventListener('change', function (event) {
+  var target = event.target.value;
+  var capacity = document.querySelector('#capacity');
+  if (target === '1' || target === '2') {
+    var capOptionOne = capacity.querySelector('option[value="1"]');
+    capOptionOne.setAttribute('selected', 'selected');
+  } else if (target === '100') {
+    var capOptionTwo = capacity.querySelector('option[value="2"]');
+    capOptionTwo.setAttribute('selected', 'selected');
+  }
+});
+
 
 
 
