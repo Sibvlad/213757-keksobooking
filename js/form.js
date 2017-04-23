@@ -2,6 +2,8 @@
 
 window.form = (function () {
   var title = document.querySelector('#title');
+  var address = document.querySelector('#address');
+  address.setAttribute('readonly', '');
   title.required = true;
   title.setAttribute('minlength', '30');
   title.setAttribute('maxlength', '100');
@@ -59,4 +61,4 @@ window.form = (function () {
       capOptionTwo.setAttribute('selected', 'selected');
     }
   });
-});
+})();
