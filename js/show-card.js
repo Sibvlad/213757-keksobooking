@@ -5,8 +5,7 @@ window.showCard = (function (event) {
   if (checkPin) {
     window.pin.deselectPin();
     checkPin.classList.add('pin--active');
-    var id = checkPin.querySelector('img').getAttribute('src');
-    window.card.updatePanel(window.map.getApp(id));
+    window.card.updatePanel(window.map.getApp(checkPin.id));
     window.map.dialog.style.display = 'block';
   }
 });

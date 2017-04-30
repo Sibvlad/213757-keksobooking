@@ -5,6 +5,7 @@ window.pin = (function () {
     render: function (apartment) {
       var div = document.createElement('div');
       div.className = 'pin';
+      div.id = 'pin' + apartment.id;
       div.setAttribute('style', 'left: ' + apartment.location.x + 'px; top: ' + apartment.location.y + 'px');
       var img = document.createElement('img');
       img.className = 'rounded';
@@ -23,5 +24,17 @@ window.pin = (function () {
         element.classList.remove('pin--active');
       }
     },
+    hidePins: function () {
+      var list = document.querySelectorAll('.tokyo__pin-map > .pin:not(.pin__main)');
+      for (var i = 0; i < list.length; i++) {
+        list[i].classList.add('invisible');
+      }
+    },
+    showPin: function (id) {
+      var element = document.querySelector('#pin' + id);
+      if (element) {
+        element.classList.remove('invisible');
+      }
+    }
   };
 })();

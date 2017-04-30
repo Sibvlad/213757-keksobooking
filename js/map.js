@@ -11,7 +11,9 @@ window.map = (function () {
     render: function (apartments) {
       _appartments = apartments;
       for (var i = 0; i < apartments.length; i++) {
+        apartments[i].id = i;
         var pin = window.pin.render(apartments[i]);
+
         fragment.appendChild(pin);
       }
       tokyoPinMap.appendChild(fragment);
@@ -22,9 +24,53 @@ window.map = (function () {
       var mainPin = tokyoPinMap.querySelector('.pin__main');
       mainPin.addEventListener('mousedown', onPinMove);
     },
+    applyFilters: function () {
+      window.debounce(function () {
+        window.pin.hidePins();
+        var form = document.querySelector('.tokyo__filters');
+        var housingType = form.querySelector('#housing_type').value;
+        var housingPrice = form.querySelector('#housing_price').value;
+        var housingRoomMumber = form.querySelector('#housing_room-number').value;
+        var housingGuestsNumber = form.querySelector('#housing_guests-number').value;
+        var features = document.querySelectorAll('input[name="feature"]:checked');
+
+        _appartments.map(function (item) {
+
+          if (item.offer.type !== housingType && housingType !== 'any') {
+            return;
+          }
+          if (housingPrice === 'low' && item.offer.price > 10000) {
+            return;
+          }
+          if (housingPrice === 'high' && item.offer.price < 50000) {
+            return;
+          }
+          if (housingPrice === 'middle' && item.offer.price < 10000) {
+            return;
+          }
+          if (housingPrice === 'middle' && item.offer.price > 50000) {
+            return;
+          }
+          if (housingRoomMumber !== 'any' && item.offer.rooms !== parseInt(housingRoomMumber, 0)) {
+            return;
+          }
+          if (housingGuestsNumber !== 'any' && item.offer.guests !== parseInt(housingGuestsNumber, 0)) {
+            return;
+          }
+
+          for (var i = 0; i < features.length; i++) {
+            if (!item.offer.features.includes(features[i].value)) {
+              return;
+            }
+          }
+
+          window.pin.showPin(item.id);
+        });
+      });
+    },
     getApp: function (id) {
       for (var j = 0; j < _appartments.length; j++) {
-        if (_appartments[j].author.avatar === id) {
+        if ('pin' + _appartments[j].id === id) {
           return _appartments[j];
         }
       }
@@ -96,4 +142,5 @@ window.map = (function () {
   }
 })();
 
+document.querySelector('.tokyo__filters').addEventListener('change', window.map.applyFilters);
 window.load('https://intensive-javascript-server-kjgvxfepjl.now.sh/keksobooking/data', window.map.render, window.map.onError);
