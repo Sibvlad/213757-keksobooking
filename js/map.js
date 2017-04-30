@@ -75,11 +75,11 @@ window.map = (function () {
   }
 
   function keydownHandler(event) {
-    if (event.keyCode === 13) {
-      window.pin.openCard(event);
-    }
-    if (event.keyCode === 27) {
-      window.card.closePanel();
+        if (event.keyCode === 13) {
+          window.pin.openCard(event);
+        }
+        if (event.keyCode === 27) {
+          window.card.closePanel();
     }
   }
 
