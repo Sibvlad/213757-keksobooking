@@ -13,7 +13,7 @@ window.pin = (function () {
       img.setAttribute('src', apartment.author.avatar);
       img.setAttribute('tabindex', '0');
       div.insertAdjacentHTML('afterBegin', img.outerHTML);
-      div.addEventListener('click', window.pin.openCard);
+      div.addEventListener('click', window.showCard);
 
       return div;
     },
@@ -23,15 +23,5 @@ window.pin = (function () {
         element.classList.remove('pin--active');
       }
     },
-    openCard: function (event) {
-      var checkPin = event.target.closest('.pin');
-      if (checkPin) {
-        window.pin.deselectPin();
-        checkPin.classList.add('pin--active');
-        var id = checkPin.querySelector('img').getAttribute('src');
-        window.card.updatePanel(window.map.getApp(id));
-        window.map.dialog.style.display = 'block';
-      }
-    }
   };
 })();
