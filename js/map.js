@@ -1,14 +1,15 @@
 'use strict';
 
 window.map = (function () {
-  var apartments = window.generateApartments(8);
 
   var fragment = document.createDocumentFragment();
   var dialogClose = document.querySelector('.dialog__close');
   var tokyoPinMap = document.querySelector('.tokyo__pin-map');
+  var _appartments = [];
 
   return {
-    render: function () {
+    render: function (apartments) {
+      _appartments = apartments;
       for (var i = 0; i < apartments.length; i++) {
         var pin = window.pin.render(apartments[i]);
         fragment.appendChild(pin);
@@ -22,12 +23,17 @@ window.map = (function () {
       mainPin.addEventListener('mousedown', onPinMove);
     },
     getApp: function (id) {
-      for (var j = 0; j < apartments.length; j++) {
-        if (apartments[j].author.avatar === id) {
-          return apartments[j];
+      for (var j = 0; j < _appartments.length; j++) {
+        if (_appartments[j].author.avatar === id) {
+          return _appartments[j];
         }
       }
       return '';
+    },
+    onError: function (message) {
+      var errorBlock = document.querySelector('.header__error');
+      errorBlock.textContent = message;
+      errorBlock.classList.remove('invisible');
     },
     dialog: document.querySelector('.dialog')
   };
@@ -75,11 +81,11 @@ window.map = (function () {
   }
 
   function keydownHandler(event) {
-        if (event.keyCode === 13) {
-          window.pin.openCard(event);
-        }
-        if (event.keyCode === 27) {
-          window.card.closePanel();
+    if (event.keyCode === 13) {
+      window.showCard(event);
+    }
+    if (event.keyCode === 27) {
+      window.card.closePanel();
     }
   }
 
@@ -90,4 +96,4 @@ window.map = (function () {
   }
 })();
 
-window.map.render();
+window.load('https://intensive-javascript-server-kjgvxfepjl.now.sh/keksobooking/data', window.map.render, window.map.onError);
